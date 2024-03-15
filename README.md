@@ -3,14 +3,11 @@ START APP WITH DOCKER:
 
 Preparations:
  -
- - Change current directory:
- 
-        cd api
 
  - Migrate the DB:
 
-        python manage.py makemigrations 
-        python manage.py migrate
+        make make_migrate
+        make run_migrate
 
 
 Start:
@@ -18,23 +15,30 @@ Start:
 
  - Build and run
 
-       sudo docker-compose up -d --build
+       make build_and_run
+
+ - Run
+
+       make run_app
 
 Additional:
+ - 
 
  - Drop all containers
 
-        sudo docker-compose down -v --remove-orphans
-
+        make drop_all_containers
 
  - Create superuser
 
-       sudo docker-compose exec api python manage.py createsuperuser
+       make make_super_user
 
  - Show logs 
 
-       sudo docker logs atlas_api
-       sudo docker logs atlas_db
+       sudo docker logs api
+       sudo docker logs db
+
+Poetry:
+ - 
 
  - Load all needed packages
 
@@ -43,3 +47,6 @@ Additional:
  - Add new package
 
        poetry add <package_name>
+
+
+For more commands inspect Makefile
