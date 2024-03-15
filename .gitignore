@@ -160,4 +160,4 @@ cython_debug/
 .idea/
 notes
 .DS_Store
-config_mongo.py
+.env
