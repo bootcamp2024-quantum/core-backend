@@ -30,26 +30,5 @@ services:
       timeout: 3s
       retries: 3
 
-  db-initializer:
-    container_name: db_initializer
-    build:
-      dockerfile: Dockerfile
-      context: ./api
-    links:
-      - db
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      ALLOWED_HOSTS: "*"
-      DB_NAME: server
-      DB_USER: django_user
-      DB_PASSWORD: password
-      DB_HOST: db
-      DB_PORT: 5432
-    volumes:
-      - "./:/app"
-    command: [ "python", "manage.py", "migrate" ]
-
 volumes:
   postgres_data:
