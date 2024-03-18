@@ -38,3 +38,6 @@ open_shell: ## Open shell to the app container
 
 run_test: ## Run test
 	sudo docker-compose exec api bash -c  "DJANGO_SETTINGS_MODULE=career_skill_atlas.settings ./manage.py test"
+
+run_test_containers: ## Run test containers
+	sudo docker-compose -f docker-compose-test.yml up -d --build
