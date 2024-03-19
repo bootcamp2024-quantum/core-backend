@@ -4,7 +4,7 @@ from django.db import models
 
 class User(AbstractUser):
     username = models.CharField(max_length=256, blank=False, unique=True)
-    password = models.CharField(max_length=128, blank=False, unique=True)
+    password = models.CharField(max_length=128, blank=False)
     avatar = models.ImageField(upload_to='')  # Where
     last_name = None
     first_name = None
