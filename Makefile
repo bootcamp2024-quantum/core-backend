@@ -37,5 +37,5 @@ open_shell: ## Open shell to the app container
 	sudo docker-compose exec api bash
 
 run_test: ## Run test
-	sudo docker compose -f docker-compose.test.yml run web-test || exit 1
-	sudo docker compose -f docker-compose.test.yml down -v --remove-orphans
+	docker compose -f docker-compose.test.yml run web-test || exit 1
+	docker compose -f docker-compose.test.yml down -v --remove-orphans
