@@ -161,4 +161,3 @@ cython_debug/
 notes
 .DS_Store
 .env
-/user/migrations/
