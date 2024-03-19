@@ -5,12 +5,11 @@ services:
   db-test:
     container_name: db-test
     image: postgres:12.0-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
     environment:
       POSTGRES_DB: config_server
       POSTGRES_USER: django_user
       POSTGRES_PASSWORD: django_password123456789
+      PGDATAPGDATA: /var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U django_user -d config_server || exit 1" ]
       interval: 5s
@@ -34,6 +33,3 @@ services:
       DB_HOST: db-test
       DB_PORT: 5432
     command: ["python", "-Wd", "manage.py", "test"]
-
-volumes:
-  postgres_data:
