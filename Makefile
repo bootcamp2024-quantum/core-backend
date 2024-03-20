@@ -30,10 +30,10 @@ make_migrate: ## Make migrate
 	docker compose exec api ./manage.py makemigrations
 
 make_super_user: ## Make super user
-	sudo docker-compose exec api ./manage.py createsuperuser
+	docker compose exec api ./manage.py createsuperuser
 
 open_shell: ## Open shell to the app container
-	sudo docker-compose exec api bash
+	docker compose exec api bash
 
 run_test: ## Run test
 	docker compose -f docker-compose.test.yml run web-test || exit 1
