@@ -32,5 +32,5 @@ services:
       POSTGRES_PASSWORD: django_password123456789
       DB_HOST: db-test
       DB_PORT: 5432
-      DJANGO_SETTINGS_MODULE: career_skill_atlas.config.base_settings
-    command: ["python", "-Wd", "manage.py", "test"]
+      DJANGO_SETTINGS_MODULE: career_skill_atlas.config.test_settings
+    command: [ "python", "-Wd", "manage.py", "test" ]
