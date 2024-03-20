@@ -8,9 +8,9 @@ services:
       target: base
       args:
         DJANGO_ENV: development
-    command: ["python", "-Wd", "manage.py", "runserver", "0.0.0.0:8000"]
+    command: ["python", "-Wd", "manage.py", "runserver", "0.0.0.0:${SERVER_PORT}"]
     ports:
-      - "8000:8000"
+      - "${SERVER_PORT}:${SERVER_PORT}"
     environment:
       - DJANGO_SETTINGS_MODULE=career_skill_atlas.settings
     volumes:
@@ -32,7 +32,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     env_file:
       - .env
     healthcheck:
