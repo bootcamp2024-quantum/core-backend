@@ -18,12 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 
 api_patterns = [
-    # path('', include(('user.urls', 'user'))),
     path('users/', include(('user.urls', 'user'))),
 ]
 
 urlpatterns = [
-    # path('api/', include(api_patterns)),
+
+    #ToDo(Vita): clarify, do we need prefix for API urls, like: path('api/v1/', include(api_patterns)),
     path('', include(api_patterns)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
