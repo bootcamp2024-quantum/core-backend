@@ -2,9 +2,8 @@ from rest_framework import exceptions as rf_exceptions
 from rest_framework import status, generics
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework_simplejwt import exceptions as rf_jwt_exceptions
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from .models import User
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer
