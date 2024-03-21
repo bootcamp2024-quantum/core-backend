@@ -34,7 +34,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['code'], 400)
-        self.assertEqual(len(response.data['message']), 1)
+        self.assertEqual(response.data['message'], "Field 'email' may not be blank.")
 
     def test_blank_field_password_error(self):
         """password field is blank"""
@@ -43,7 +43,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['code'], 400)
-        self.assertEqual(len(response.data['message']), 1)
+        self.assertEqual(response.data['message'], "Field 'password' may not be blank.")
 
     def test_blank_fields_error(self):
         """email and password fields are blank."""
@@ -53,6 +53,10 @@ class CustomTokenObtainPairViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['code'], 400)
         self.assertEqual(len(response.data['message']), 2)
+        self.assertEqual(len(response.data['message'].split('\n')), 2)
+        self.assertEqual(
+            response.data['message'].split('\n'),
+            ["Field 'email' may not be blank.", "Field 'password' may not be blank."])
 
     def test_not_existed_user_error(self):
         """invalid email and password fields."""
@@ -62,3 +66,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['code'], 400)
         self.assertEqual(response.data['message'], "Invalid credentials")
+
+    def test_http_500_internal_server_error(self):
+        """internal server error handling test"""
+        pass
