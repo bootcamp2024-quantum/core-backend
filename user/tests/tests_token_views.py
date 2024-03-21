@@ -52,7 +52,6 @@ class CustomTokenObtainPairViewTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['code'], 400)
-        self.assertEqual(len(response.data['message']), 2)
         self.assertEqual(len(response.data['message'].split('\n')), 2)
         self.assertEqual(
             response.data['message'].split('\n'),
