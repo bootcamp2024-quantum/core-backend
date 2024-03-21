@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.urls import path, include
 
 api_patterns = [
     path('users/', include(('user.urls', 'user'))),
@@ -24,4 +25,5 @@ api_patterns = [
 urlpatterns = [
     path('api/', include(api_patterns)),
     path('admin/', admin.site.urls),
+    path('', include('user.urls'))
 ]
