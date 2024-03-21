@@ -76,5 +76,8 @@ Commands below will help you ensure that all needed packages are installed in yo
 
        poetry add <package_name>
 
+Swagger:
+-
+    http://host:port/api/docs/
 
 For more commands inspect Makefile.
