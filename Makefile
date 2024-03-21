@@ -18,7 +18,7 @@ build_and_run: ## Run and build application
 	 docker compose up -d --build
 
 run_app:  ## Run application
-	docker compose up
+	docker compose up -d
 
 drop_all_containers: ## Drop all containers
 	docker compose down -v --remove-orphans
