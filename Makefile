@@ -34,3 +34,7 @@ make_super_user: ## Make super user
 
 open_shell: ## Open shell to the app container
 	docker compose exec api bash
+
+run_test: ## Run test
+	docker compose -f docker-compose.test.yml run web-test || exit 1
+	docker compose -f docker-compose.test.yml down -v --remove-orphans
