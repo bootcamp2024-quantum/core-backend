@@ -1,1 +1,1 @@
-from .tests_token_views import CustomTokenObtainPairViewTests
+from .tests_token_views import *
