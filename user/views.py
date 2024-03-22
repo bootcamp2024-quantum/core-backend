@@ -28,7 +28,7 @@ class UserCreateView(generics.CreateAPIView):
                 request_only=True,
                 value={
                     "username": "SomeUserName",
-                    "email": "soeEmail@gmail.com",
+                    "email": "someEmail@gmail.com",
                     "password": "strongPassword",
                     "repeat_password": "strongPassword",
                     "avatar": None,
