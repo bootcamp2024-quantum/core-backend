@@ -7,9 +7,9 @@ from user.managers import CustomUserManager
 class User(AbstractUser):
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
-    avatar = models.ImageField(upload_to='user_avatar', blank=True)
+    avatar = models.ImageField(upload_to="user_avatar", blank=True)
 
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ["email"]
 
     objects = CustomUserManager()
 

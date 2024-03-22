@@ -1,22 +1,23 @@
-from rest_framework import generics, mixins
 from drf_spectacular.utils import (
     OpenApiExample,
     OpenApiResponse,
     extend_schema,
     inline_serializer,
 )
-from .models import User
-from .serializers import UserSerializer, UserPUTSerializer
+from rest_framework import generics, mixins
 from rest_framework.decorators import action
-
-
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.serializers import CharField
+
+from .models import User
+from .serializers import UserPUTSerializer, UserSerializer
 
 
 @extend_schema(tags=["Users"])
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @extend_schema(
         request=UserSerializer,
@@ -41,7 +42,7 @@ class UserCreateView(generics.CreateAPIView):
             "400": OpenApiResponse(
                 description="",
                 response=inline_serializer(
-                    name="Skill object with ID 'topic_id' does not exist.",
+                    name="Validation error.",
                     fields={
                         "error": bool,
                         "message": CharField(),
@@ -50,18 +51,18 @@ class UserCreateView(generics.CreateAPIView):
             ),
         },
     )
-    @action(
-        detail=False,
-        methods=['post']
-    )
+    @action(detail=False, methods=["post"])
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
 
 @extend_schema(tags=["Users"])
-class UserDeleteUpdateRetrieveView(generics.RetrieveDestroyAPIView, mixins.UpdateModelMixin):
+class UserDeleteUpdateRetrieveView(
+    generics.RetrieveDestroyAPIView, mixins.UpdateModelMixin
+):
     queryset = User.objects.all()
     serializer_class = UserPUTSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     @extend_schema(
         request=UserPUTSerializer,
@@ -82,9 +83,9 @@ class UserDeleteUpdateRetrieveView(generics.RetrieveDestroyAPIView, mixins.Updat
                 response=UserPUTSerializer,
             ),
             "404": OpenApiResponse(
-                description="User object with ID does not exist.",
+                description="User object with ID {id} does not exist.",
                 response=inline_serializer(
-                    name="User object with ID does not exist.",
+                    name="User object with ID {id} does not exist.",
                     fields={
                         "error": bool,
                         "message": CharField(),
@@ -93,10 +94,7 @@ class UserDeleteUpdateRetrieveView(generics.RetrieveDestroyAPIView, mixins.Updat
             ),
         },
     )
-    @action(
-        detail=False,
-        methods=['get']
-    )
+    @action(detail=False, methods=["get"])
     def get(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -118,6 +116,16 @@ class UserDeleteUpdateRetrieveView(generics.RetrieveDestroyAPIView, mixins.Updat
             "200": OpenApiResponse(
                 response=UserPUTSerializer,
             ),
+            "400": OpenApiResponse(
+                description="Validation error for User object with ID.",
+                response=inline_serializer(
+                    name="Validation error for User object with ID.",
+                    fields={
+                        "error": bool,
+                        "message": CharField(),
+                    },
+                ),
+            ),
             "404": OpenApiResponse(
                 description="User object with ID does not exist.",
                 response=inline_serializer(
@@ -129,11 +137,6 @@ class UserDeleteUpdateRetrieveView(generics.RetrieveDestroyAPIView, mixins.Updat
                 ),
             ),
         },
-    )
-    @action(
-        detail=False,
-        methods=["post"],
-        name="Update user",
     )
     def put(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
