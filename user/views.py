@@ -3,14 +3,14 @@ from rest_framework import generics, status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from . import serializers
 from .models import User
-from .serializers import CustomTokenObtainPairSerializer, UserSerializer
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+    serializer_class = serializers.CustomTokenObtainPairSerializer
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)
@@ -39,6 +39,25 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = serializers.CustomTokenRefreshSerializer
+
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        serializer = self.get_serializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+        try:
+            if serializer.validated_data["access"]:
+                return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        except KeyError:
+            if serializer.validated_data["code"] == status.HTTP_400_BAD_REQUEST:
+                status_code = status.HTTP_400_BAD_REQUEST
+            else:
+                status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+
+            return Response(data=serializer.validated_data, status=status_code)
+
+
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = serializers.UserSerializer

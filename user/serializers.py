@@ -2,7 +2,11 @@
 
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer,
+    TokenRefreshSerializer,
+)
 
 from .models import User
 
@@ -33,6 +37,27 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             return data
         else:
             return {"message": "Invalid credentials", "code": 400}
+
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    """
+    Custom TokenRefreshSerializer to handle token refresh.
+    """
+
+    refresh = serializers.CharField(allow_blank=True)
+
+    def validate(self, attrs):
+        """
+        Validate the token and return the data if it's valid.
+        """
+        if not attrs.get("refresh"):
+            return {"message": "Field 'refresh' may not be blank.", "code": 400}
+
+        try:
+            data = super().validate(attrs)
+            return data
+        except TokenError as e:
+            return {"message": str(e), "code": 500}
 
 
 class UserSerializer(serializers.ModelSerializer):

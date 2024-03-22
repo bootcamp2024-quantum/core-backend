@@ -74,3 +74,48 @@ class CustomTokenObtainPairViewTests(APITestCase):
     def test_http_500_internal_server_error(self):
         """internal server error handling test"""
         pass
+
+
+class TokenRefreshViewTests(APITestCase):
+
+    def setUp(self):
+        email = "test@gmail.com"
+        password = "123"
+        User.objects.create_user(
+            username="test_account", email=email, password=password
+        )
+        self.token_pair = self.client.post(
+            "/token/", {"email": email, "password": password}, format="json"
+        ).data
+
+    def test_refresh_success(self):
+        """refresh success."""
+        response = self.client.post(
+            "/token/refresh/", {"refresh": self.token_pair["refresh"]}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("access", response.data)
+
+    def test_refresh_blank_field(self):
+        """refresh field is blank."""
+        response = self.client.post("/token/refresh/", {"refresh": ""}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["message"], "Field 'refresh' may not be blank.")
+        self.assertEqual(response.data["code"], 400)
+
+    def test_refresh_error(self):
+        """invalid token provided."""
+        response = self.client.post(
+            "/token/refresh/",
+            {
+                "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90"
+                "eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxMTEzMjE3OCwiaWF0I"
+                "joxNzExMDQ1Nzc4LCJqdGkiOiIyYTUwNjgxOTM2ODA0MzgwOW"
+                "U0MTMwN1241VmZmY4NiIsInVzZXJfaWQiOjF9.ZquTX19QaR2"
+                "1451u6SFI0u066Xq-LcJ67rJTyDMk-1E"
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(response.data["message"], "Token is invalid or expired")
+        self.assertEqual(response.data["code"], status.HTTP_500_INTERNAL_SERVER_ERROR)
