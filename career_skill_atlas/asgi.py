@@ -11,6 +11,6 @@ import os
 
 from django.career_skill_atlas.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'career_skill_atlas.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "career_skill_atlas.settings")
 
 application = get_asgi_application()

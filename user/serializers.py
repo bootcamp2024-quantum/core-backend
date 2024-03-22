@@ -1,4 +1,5 @@
 """Serializers for the user app."""
+
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -10,6 +11,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Serializer for tokens obtaining process.
     """
+
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
 
@@ -18,14 +20,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         Validate the provided credentials and returns created token (access token and refresh token)
         with added user_id field.
         """
-        email = attrs.get('email')
-        password = attrs.get('password')
+        email = attrs.get("email")
+        password = attrs.get("password")
 
-        user = authenticate(request=self.context.get('request'), username=email, password=password)
+        user = authenticate(
+            request=self.context.get("request"), username=email, password=password
+        )
 
         if user:
             data = super().validate(attrs)
-            data['user_id'] = user.id
+            data["user_id"] = user.id
             return data
         else:
             return {"message": "Invalid credentials", "code": 400}
@@ -38,22 +42,22 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'repeat_password', 'avatar')
+        fields = ("username", "email", "password", "repeat_password", "avatar")
 
     def validate(self, attrs):
-        password = attrs.get('password')
-        repeat_password = attrs.get('repeat_password')
+        password = attrs.get("password")
+        repeat_password = attrs.get("repeat_password")
         if password != repeat_password:
-            raise serializers.ValidationError('Passwords do not match.')
-        attrs.pop('repeat_password', None)
+            raise serializers.ValidationError("Passwords do not match.")
+        attrs.pop("repeat_password", None)
         return attrs
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            validated_data['email'],
-            validated_data['password'],
-            username=validated_data['username'],
-            avatar=validated_data['avatar']
+            validated_data["email"],
+            validated_data["password"],
+            username=validated_data["username"],
+            avatar=validated_data["avatar"],
         )
         user.save()
         return user
