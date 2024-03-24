@@ -1,16 +1,21 @@
 from rest_framework import exceptions as rf_exceptions
-from rest_framework import generics, status
+from rest_framework import status
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-
-from . import serializers
-from .models import User
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView)
+from user.models import User
+from user.serializers import (CustomTokenObtainPairSerializer,
+                              CustomTokenRefreshSerializer,
+                              UserCreateSerializer,
+                              UserRetrieveUpdateDestroySerializer)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = serializers.CustomTokenObtainPairSerializer
+    serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)
@@ -40,7 +45,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class CustomTokenRefreshView(TokenRefreshView):
-    serializer_class = serializers.CustomTokenRefreshSerializer
+    serializer_class = CustomTokenRefreshSerializer
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)
@@ -58,6 +63,26 @@ class CustomTokenRefreshView(TokenRefreshView):
             return Response(data=serializer.validated_data, status=status_code)
 
 
-class UserCreateView(generics.CreateAPIView):
+class UserCreateAPIView(CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = serializers.UserSerializer
+    serializer_class = UserCreateSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "User account created successfully."},
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {"message": "Bad request.", "code": status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRetrieveUpdateDestroySerializer

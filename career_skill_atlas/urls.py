@@ -17,12 +17,26 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from user.views import CustomTokenObtainPairView, CustomTokenRefreshView
+
+from .docs_drf_yasg import urlpatterns as doc_urls
+
+auth_patterns = [
+    path("token/", CustomTokenObtainPairView.as_view(), name="token-obtain-pair"),
+    path("token/refresh/", CustomTokenRefreshView.as_view(), name="token-refresh")
+]
 
 api_patterns = [
-    path("users/", include(("user.urls", "user"))),
+    path('', include(auth_patterns)),
+    path("users/", include("user.urls", namespace="user"))
 ]
+api_patterns.extend(doc_urls)
 
 urlpatterns = [
-    path("api/", include(api_patterns)),
-    path("admin/", admin.site.urls)
+    path("admin/", admin.site.urls),
+    path("api/", include(api_patterns))
 ]
+
+admin.site.site_header = 'Career Skill | Atlas Administration'
+admin.site.index_title = 'Career Skill | Atlas administration'
+admin.site.site_title = 'Career Skill | Atlas admin'

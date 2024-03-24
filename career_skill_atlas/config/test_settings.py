@@ -1,1 +1,1 @@
-from ..config.base_settings import *
+from ..config.base_settings import *  # noqa
