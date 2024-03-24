@@ -78,6 +78,6 @@ Commands below will help you ensure that all needed packages are installed in yo
 
 Swagger:
 -
-    http://host:port/api/docs/
+    http://host:port/api/swagger/
 
 For more commands inspect Makefile.
