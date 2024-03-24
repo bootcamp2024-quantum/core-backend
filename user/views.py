@@ -1,23 +1,21 @@
-from drf_spectacular.utils import (OpenApiExample, OpenApiResponse,
-                                   extend_schema, inline_serializer)
 from rest_framework import exceptions as rf_exceptions
-from rest_framework import generics, mixins, status
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import status
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.serializers import CharField
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
-
-from . import serializers
-from .models import User
-from .serializers import UserPUTSerializer, UserSerializer
+from user.models import User
+from user.serializers import (CustomTokenObtainPairSerializer,
+                              CustomTokenRefreshSerializer,
+                              UserCreateSerializer,
+                              UserRetrieveUpdateDestroySerializer)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = serializers.CustomTokenObtainPairSerializer
+    serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)
@@ -47,7 +45,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class CustomTokenRefreshView(TokenRefreshView):
-    serializer_class = serializers.CustomTokenRefreshSerializer
+    serializer_class = CustomTokenRefreshSerializer
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         serializer = self.get_serializer(data=request.data)
@@ -65,130 +63,26 @@ class CustomTokenRefreshView(TokenRefreshView):
             return Response(data=serializer.validated_data, status=status_code)
 
 
-@extend_schema(tags=["Users"])
-class UserCreateView(generics.CreateAPIView):
+class UserCreateAPIView(CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = UserCreateSerializer
+    permission_classes = (AllowAny,)
 
-    @extend_schema(
-        request=UserSerializer,
-        examples=[
-            OpenApiExample(
-                "Create User with the specified parameters",
-                description="Create User with the specified parameters",
-                request_only=True,
-                value={
-                    "username": "SomeUserName",
-                    "email": "someEmail@gmail.com",
-                    "password": "strongPassword",
-                    "repeat_password": "strongPassword",
-                    "avatar": None,
-                },
-            ),
-        ],
-        responses={
-            "201": OpenApiResponse(
-                response=UserSerializer,
-            ),
-            "400": OpenApiResponse(
-                description="",
-                response=inline_serializer(
-                    name="Validation error.",
-                    fields={
-                        "error": bool,
-                        "message": CharField(),
-                    },
-                ),
-            ),
-        },
-    )
-    @action(detail=False, methods=["post"])
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "User account created successfully."},
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {"message": "Bad request.", "code": status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
-@extend_schema(tags=["Users"])
-class UserDeleteUpdateRetrieveView(
-    generics.RetrieveDestroyAPIView, mixins.UpdateModelMixin
-):
+class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
-    serializer_class = UserPUTSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    @extend_schema(
-        request=UserPUTSerializer,
-        examples=[
-            OpenApiExample(
-                "Get User by ID",
-                description="Get User by ID",
-                request_only=True,
-                value={
-                    "username": "SomeUserName",
-                    "email": "someEmail@gmail.com",
-                    "avatar": None,
-                },
-            ),
-        ],
-        responses={
-            "200": OpenApiResponse(
-                response=UserPUTSerializer,
-            ),
-            "404": OpenApiResponse(
-                description="User object with ID {id} does not exist.",
-                response=inline_serializer(
-                    name="User object with ID {id} does not exist.",
-                    fields={
-                        "error": bool,
-                        "message": CharField(),
-                    },
-                ),
-            ),
-        },
-    )
-    @action(detail=False, methods=["get"])
-    def get(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    @extend_schema(
-        request=UserPUTSerializer,
-        examples=[
-            OpenApiExample(
-                "Update User with the specified parameters",
-                description="Update User with the specified parameters",
-                request_only=True,
-                value={
-                    "username": "SomeUserName",
-                    "email": "someEmail@gmail.com",
-                    "avatar": None,
-                },
-            ),
-        ],
-        responses={
-            "200": OpenApiResponse(
-                response=UserPUTSerializer,
-            ),
-            "400": OpenApiResponse(
-                description="Validation error for User object with ID.",
-                response=inline_serializer(
-                    name="Validation error for User object with ID.",
-                    fields={
-                        "error": bool,
-                        "message": CharField(),
-                    },
-                ),
-            ),
-            "404": OpenApiResponse(
-                description="User object with ID does not exist.",
-                response=inline_serializer(
-                    name="User object with ID does not exist.",
-                    fields={
-                        "error": bool,
-                        "message": CharField(),
-                    },
-                ),
-            ),
-        },
-    )
-    def put(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+    serializer_class = UserRetrieveUpdateDestroySerializer

@@ -1,12 +1,11 @@
-"""Serializers for the user app."""
+"""Serializers for the user app"""
 
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.serializers import (TokenObtainPairSerializer,
                                                   TokenRefreshSerializer)
-
-from .models import User
+from user.models import User
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -25,9 +24,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         email = attrs.get("email")
         password = attrs.get("password")
 
-        user = authenticate(
-            request=self.context.get("request"), username=email, password=password
-        )
+        user = authenticate(request=self.context.get("request"), username=email, password=password)
 
         if user:
             data = super().validate(attrs)
@@ -58,14 +55,14 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
             return {"message": str(e), "code": 500}
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     repeat_password = serializers.CharField(write_only=True)
     avatar = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = User
-        fields = ("username", "email", "password", "repeat_password", "avatar")
+        fields = ("email", "password", "repeat_password", "avatar")
 
     def validate(self, attrs):
         password = attrs.get("password")
@@ -79,15 +76,13 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             validated_data["email"],
             validated_data["password"],
-            username=validated_data["username"],
-            avatar=validated_data["avatar"],
+            avatar=validated_data["avatar"]
         )
         user.save()
         return user
 
 
-# todo Create cool serializer inheritance )
-class UserPUTSerializer(serializers.ModelSerializer):
+class UserRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
