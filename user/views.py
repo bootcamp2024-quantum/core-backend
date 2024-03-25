@@ -77,7 +77,6 @@ class UserCreateAPIView(CreateAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                # data={"message": "User account created successfully."},
                 status=status.HTTP_201_CREATED
             )
         else:
@@ -129,4 +128,7 @@ class UserPasswordUpdateAPIView(UpdateAPIView):
                 status=status.HTTP_200_OK,
             )
         else:
-            raise ValidationError("Current password is incorrect.")
+            Response(
+                data={"message": "Current password is incorrect."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
