@@ -2,6 +2,8 @@ services:
   db-test:
     container_name: db-test
     image: postgres:12.0-alpine
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: test_db
       POSTGRES_USER: test_user
@@ -22,6 +24,8 @@ services:
     depends_on:
       db-test:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
       ALLOWED_HOSTS: "*"
       POSTGRES_DB: test_db
@@ -30,4 +34,4 @@ services:
       DB_HOST: db-test
       DB_PORT: 5432
       DJANGO_SETTINGS_MODULE: career_skill_atlas.config.test_settings
-    command: [ "python", "-Wd", "manage.py", "test" ]
+    command: [ "python", "-Wd", "manage.py", "test", "--settings=career_skill_atlas.config.test_settings"]
