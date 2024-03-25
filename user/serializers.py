@@ -24,7 +24,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         email = attrs.get("email")
         password = attrs.get("password")
 
-        user = authenticate(request=self.context.get("request"), username=email, password=password)
+        user = authenticate(
+            request=self.context.get("request"), username=email, password=password
+        )
 
         if user:
             data = super().validate(attrs)
@@ -77,7 +79,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             email=validated_data["email"],
             password=validated_data["password"],
             username=validated_data["username"],
-            avatar=validated_data["avatar"]
+            avatar=validated_data["avatar"],
         )
         user.save()
         return user

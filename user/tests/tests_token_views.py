@@ -83,7 +83,9 @@ class TokenRefreshViewTests(APITestCase):
         password = "123"
         username = "testUser"
         User.objects.create_user(
-            email=email, password=password, username=username,
+            email=email,
+            password=password,
+            username=username,
         )
         self.token_pair = self.client.post(
             "/api/token/", {"email": email, "password": password}, format="json"
@@ -92,14 +94,18 @@ class TokenRefreshViewTests(APITestCase):
     def test_refresh_success(self):
         """refresh success."""
         response = self.client.post(
-            "/api/token/refresh/", {"refresh": self.token_pair["refresh"]}, format="json"
+            "/api/token/refresh/",
+            {"refresh": self.token_pair["refresh"]},
+            format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("access", response.data)
 
     def test_refresh_blank_field(self):
         """refresh field is blank."""
-        response = self.client.post("/api/token/refresh/", {"refresh": ""}, format="json")
+        response = self.client.post(
+            "/api/token/refresh/", {"refresh": ""}, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["message"], "Field 'refresh' may not be blank.")
         self.assertEqual(response.data["code"], 400)

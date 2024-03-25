@@ -8,8 +8,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.views import (TokenObtainPairView,
-                                            TokenRefreshView)
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 from user.models import User
 from user.serializers import (CustomTokenObtainPairSerializer,
                               CustomTokenRefreshSerializer,
@@ -76,13 +76,11 @@ class UserCreateAPIView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                status=status.HTTP_201_CREATED
-            )
+            return Response(status=status.HTTP_201_CREATED)
         else:
             return Response(
                 data={"message": "Bad request.", "code": status.HTTP_400_BAD_REQUEST},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
