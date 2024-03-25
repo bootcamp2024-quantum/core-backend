@@ -15,7 +15,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
 
     def test_successful_token_generation(self):
         """Test that the token is obtained by valid user"""
-        url = "/token/"
+        url = "/api/token/"
         data = {"email": "test@gmail.com", "password": "123"}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -24,7 +24,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
 
     def test_unexpected_fields_error(self):
         """request body have additional fields"""
-        url = "/token/"
+        url = "/api/token/"
         data = {"email": "test@gmail.com", "password": "123", "trash_data": "123456789"}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -33,7 +33,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
 
     def test_blank_field_email_error(self):
         """email field is blank."""
-        url = "/token/"
+        url = "/api/token/"
         data = {"email": "", "password": "123"}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -42,7 +42,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
 
     def test_blank_field_password_error(self):
         """password field is blank"""
-        url = "/token/"
+        url = "/api/token/"
         data = {"email": "test@gmail.com", "password": ""}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -51,7 +51,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
 
     def test_blank_fields_error(self):
         """email and password fields are blank."""
-        url = "/token/"
+        url = "/api/token/"
         data = {"email": "", "password": ""}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -64,7 +64,7 @@ class CustomTokenObtainPairViewTests(APITestCase):
 
     def test_not_existed_user_error(self):
         """invalid email and password fields."""
-        url = "/token/"
+        url = "/api/token/"
         data = {"email": "no_existing@gmail.com", "password": "3213213213"}
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -81,24 +81,31 @@ class TokenRefreshViewTests(APITestCase):
     def setUp(self):
         email = "test@gmail.com"
         password = "123"
+        username = "testUser"
         User.objects.create_user(
-            username="test_account", email=email, password=password
+            email=email,
+            password=password,
+            username=username,
         )
         self.token_pair = self.client.post(
-            "/token/", {"email": email, "password": password}, format="json"
+            "/api/token/", {"email": email, "password": password}, format="json"
         ).data
 
     def test_refresh_success(self):
         """refresh success."""
         response = self.client.post(
-            "/token/refresh/", {"refresh": self.token_pair["refresh"]}, format="json"
+            "/api/token/refresh/",
+            {"refresh": self.token_pair["refresh"]},
+            format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("access", response.data)
 
     def test_refresh_blank_field(self):
         """refresh field is blank."""
-        response = self.client.post("/token/refresh/", {"refresh": ""}, format="json")
+        response = self.client.post(
+            "/api/token/refresh/", {"refresh": ""}, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["message"], "Field 'refresh' may not be blank.")
         self.assertEqual(response.data["code"], 400)
@@ -106,7 +113,7 @@ class TokenRefreshViewTests(APITestCase):
     def test_refresh_error(self):
         """invalid token provided."""
         response = self.client.post(
-            "/token/refresh/",
+            "/api/token/refresh/",
             {
                 "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90"
                 "eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxMTEzMjE3OCwiaWF0I"
