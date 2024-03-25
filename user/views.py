@@ -110,7 +110,7 @@ class UserPasswordUpdateAPIView(UpdateAPIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
-    def get_user_object(user_id):
+    def get_user_object(user_id: int):
         try:
             return User.objects.get(id=user_id)
         except User.DoesNotExist:
