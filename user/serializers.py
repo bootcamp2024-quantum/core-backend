@@ -88,7 +88,7 @@ class UserRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "avatar")
+        fields = ("pk", "username", "email", "avatar")
 
 
 class UserPasswordUpdateSerializer(serializers.Serializer):

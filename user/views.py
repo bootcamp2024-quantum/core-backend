@@ -77,7 +77,7 @@ class UserCreateAPIView(CreateAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                data={"message": "User account created successfully."},
+                # data={"message": "User account created successfully."},
                 status=status.HTTP_201_CREATED
             )
         else:
