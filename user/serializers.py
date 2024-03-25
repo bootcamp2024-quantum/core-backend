@@ -62,7 +62,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "password", "repeat_password", "avatar")
+        fields = ("username", "email", "password", "repeat_password", "avatar")
 
     def validate(self, attrs):
         password = attrs.get("password")
@@ -74,8 +74,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            validated_data["email"],
-            validated_data["password"],
+            email=validated_data["email"],
+            password=validated_data["password"],
+            username=validated_data["username"],
             avatar=validated_data["avatar"]
         )
         user.save()
