@@ -27,9 +27,17 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=0))
 
+
+# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5174",
+    "http://localhost:7777",
+    "http://0.0.0.0:5174",
+    "http://0.0.0.0:7777"]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ["*"]
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,11 +51,13 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "rest_framework_simplejwt",
+    "corsheaders",
     # Local Apps
     "user",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
