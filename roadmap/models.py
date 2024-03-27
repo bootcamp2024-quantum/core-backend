@@ -12,7 +12,7 @@ class Roadmap(models.Model):
 
 class Vertex(models.Model):
     roadmap = models.ForeignKey(Roadmap, on_delete=models.CASCADE)
-    depends = models.ManyToManyField("self", symmetrical=False)
+    depends = models.ManyToManyField("self", symmetrical=False, blank=True)
     info_card = models.ForeignKey("InfoCard", on_delete=models.CASCADE)
 
 
