@@ -4,7 +4,7 @@ from django.db import models
 class Roadmap(models.Model):
     published = models.BooleanField(default=False)
     title = models.CharField(max_length=255, unique=True)
-    tags = models.ManyToManyField("Tag", related_name="tags", related_query_name="tag", )
+    tags = models.ManyToManyField("Tag", related_name="r_tags", related_query_name="r_tag", )
 
 
 class Vertex(models.Model):
@@ -25,7 +25,7 @@ class InfoCard(models.Model):
     description = models.TextField(blank=True)
     links = models.TextField(blank=True)
 
-    tags = models.ManyToManyField("Tag", related_name="tags", related_query_name="tag")
+    tags = models.ManyToManyField("Tag", related_name="ic_tags", related_query_name="ic_tag")
 
 
 class MetaDomain(models.Model):
