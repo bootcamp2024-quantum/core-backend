@@ -6,6 +6,9 @@ class Roadmap(models.Model):
     title = models.CharField(max_length=255, unique=True)
     tags = models.ManyToManyField("Tag", related_name="r_tags", related_query_name="r_tag", )
 
+    def __str__(self):
+        return self.title
+
 
 class Vertex(models.Model):
     roadmap = models.ForeignKey(Roadmap, on_delete=models.CASCADE)
@@ -31,18 +34,33 @@ class InfoCard(models.Model):
 class MetaDomain(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class LocalDomain(models.Model):
     name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class KnowledgeType(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class EntryLevel(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
