@@ -1,9 +1,11 @@
 from rest_framework import exceptions as rf_exceptions
 from rest_framework import status
 from rest_framework.exceptions import NotFound, ValidationError
-from rest_framework.generics import (CreateAPIView,
-                                     RetrieveUpdateDestroyAPIView,
-                                     UpdateAPIView)
+from rest_framework.generics import (
+    CreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    UpdateAPIView,
+)
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -11,11 +13,13 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from user.models import User
-from user.serializers import (CustomTokenObtainPairSerializer,
-                              CustomTokenRefreshSerializer,
-                              UserCreateSerializer,
-                              UserPasswordUpdateSerializer,
-                              UserRetrieveUpdateDestroySerializer)
+from user.serializers import (
+    CustomTokenObtainPairSerializer,
+    CustomTokenRefreshSerializer,
+    UserCreateSerializer,
+    UserPasswordUpdateSerializer,
+    UserRetrieveUpdateDestroySerializer,
+)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -57,7 +61,9 @@ class CustomTokenRefreshView(TokenRefreshView):
         serializer.is_valid(raise_exception=True)
         try:
             if serializer.validated_data["access"]:
-                return Response(data=serializer.validated_data, status=status.HTTP_200_OK)
+                return Response(
+                    data=serializer.validated_data, status=status.HTTP_200_OK
+                )
         except KeyError:
             if serializer.validated_data["code"] == status.HTTP_400_BAD_REQUEST:
                 status_code = status.HTTP_400_BAD_REQUEST
@@ -78,10 +84,7 @@ class UserCreateAPIView(CreateAPIView):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         else:
-            return Response(
-                data={"message": "Bad request.", "code": status.HTTP_400_BAD_REQUEST},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
@@ -97,7 +100,9 @@ class UserPasswordUpdateAPIView(UpdateAPIView):
         try:
             user = self.get_user_object(kwargs.get("pk"))
         except NotFound as error:
-            return Response(data={"error": str(error)}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                data={"error": str(error)}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = self.get_serializer(data=request.data)
 
