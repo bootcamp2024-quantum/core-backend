@@ -15,6 +15,9 @@ class Vertex(models.Model):
     depends = models.ManyToManyField("self", symmetrical=False, blank=True)
     info_card = models.ForeignKey("InfoCard", on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"Vertex {self.id} {self.roadmap}"
+
 
 class InfoCard(models.Model):
     # SET_NULL is selected for not dropping entire InfoCard instance
@@ -29,6 +32,9 @@ class InfoCard(models.Model):
     links = models.TextField(blank=True)
 
     tags = models.ManyToManyField("Tag", related_name="ic_tags", related_query_name="ic_tag")
+
+    def __str__(self):
+        return self.title
 
 
 class MetaDomain(models.Model):
