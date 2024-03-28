@@ -60,7 +60,7 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     repeat_password = serializers.CharField(write_only=True)
-    avatar = serializers.ImageField(required=False, default=None)
+    avatar = serializers.ImageField(required=False, allow_null=True, default=None)
 
     class Meta:
         model = User
