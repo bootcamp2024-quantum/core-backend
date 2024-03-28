@@ -28,7 +28,8 @@ auth_patterns = [
 
 api_patterns = [
     path('', include(auth_patterns)),
-    path("users/", include("user.urls", namespace="user"))
+    path("users/", include("user.urls", namespace="user")),
+    path("roadmaps/", include("roadmap.urls", namespace="roadmap"))
 ]
 api_patterns.extend(doc_urls)
 
