@@ -87,12 +87,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class UserRetrieveUpdateDestroySerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(required=False, allow_null=True)
+    name = serializers.CharField(source="username")
 
     class Meta:
         model = User
-        fields = ("pk", "username", "email", "avatar")
+        fields = ("pk", "name", "email", "avatar")
 
 
 class UserPasswordUpdateSerializer(serializers.Serializer):
-    current_password = serializers.CharField(required=True)
+    old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)

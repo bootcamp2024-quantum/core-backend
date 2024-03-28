@@ -1,6 +1,6 @@
 from rest_framework import exceptions as rf_exceptions
 from rest_framework import status
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import (
     CreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -120,10 +120,10 @@ class UserPasswordUpdateAPIView(UpdateAPIView):
 
     @staticmethod
     def update_password(user, validated_data):
-        current_password = validated_data.get("current_password")
+        old_password = validated_data.get("old_password")
         new_password = validated_data.get("new_password")
 
-        if user.check_password(current_password):
+        if user.check_password(old_password):
             user.set_password(new_password)
             user.save()
             return Response(
