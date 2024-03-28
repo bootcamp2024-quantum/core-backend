@@ -1,13 +1,8 @@
-from rest_framework import generics, pagination
+from rest_framework import generics
 
 from roadmap.models import Roadmap
 from roadmap.serializers import RoadmapSerializer
-
-
-class RoadmapSearchPagination(pagination.PageNumberPagination):
-    page_size = 5
-    page_size_query_param = 'page_size'
-    max_page_size = 10
+from roadmap.pagination import RoadmapSearchPagination
 
 
 class RoadmapSearchAPIView(generics.ListAPIView):
@@ -19,7 +14,7 @@ class RoadmapSearchAPIView(generics.ListAPIView):
         meta_domain = self.request.GET.get('meta_domain')
         local_domain = self.request.GET.get('local_domain')
         entry_level = self.request.GET.get('entry_level')
-        ordering = self.request.GET.get('ordering')
+        ordering = self.request.GET.get('ordering', 'asc')
 
         queryset = Roadmap.objects.filter(published=True)
 
@@ -36,9 +31,7 @@ class RoadmapSearchAPIView(generics.ListAPIView):
             queryset = queryset.filter(title__icontains=search_query)
 
         # Apply ordering
-        if ordering == 'asc':
-            queryset = queryset.order_by('title')
-        else:
+        if ordering != 'asc':
             queryset = queryset.order_by('-title')
 
         return queryset
