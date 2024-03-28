@@ -91,6 +91,11 @@ class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserRetrieveUpdateDestroySerializer
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "User account deleted successfully."}, status=status.HTTP_200_OK)
+
 
 class UserPasswordUpdateAPIView(UpdateAPIView):
     serializer_class = UserPasswordUpdateSerializer
