@@ -16,8 +16,8 @@ class VertexAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Roadmap, RoadmapAdmin)
-admin.site.register(models.InfoCard,InfoCardAdmin)
-admin.site.register(models.Vertex,VertexAdmin)
+admin.site.register(models.InfoCard, InfoCardAdmin)
+admin.site.register(models.Vertex, VertexAdmin)
 
 
 class SmallModelAdmin(admin.ModelAdmin):
